@@ -4,7 +4,7 @@
 # Contributor: Themaister <maister@archlinux.us>
 
 pkgname=pcsx2-git
-pkgver=1.7.5585.r0.gef9cbf6be8
+pkgver=1.7.5659.r0.g9de38e50e2
 pkgrel=1
 pkgdesc='A Sony PlayStation 2 emulator'
 arch=(x86_64)
@@ -58,7 +58,6 @@ options=(!lto)
 source=(
     git+https://github.com/PCSX2/pcsx2.git
     git+https://github.com/PCSX2/pcsx2_patches.git
-    git+https://github.com/tukaani-project/xz.git
     git+https://github.com/google/googletest.git
     git+https://github.com/fmtlib/fmt.git
     git+https://github.com/biojppm/rapidyaml.git
@@ -79,7 +78,6 @@ prepare() {
     cd pcsx2
     local submodule
     _pcsx2_submodules=(
-        xz::3rdparty/xz/xz
         googletest::3rdparty/gtest
         fmt::3rdparty/fmt/fmt
         lz4::3rdparty/lz4/lz4
@@ -149,7 +147,6 @@ package() {
 }
 
 b2sums=('SKIP'
-    'SKIP'
     'SKIP'
     'SKIP'
     'SKIP'
