@@ -4,7 +4,7 @@
 # Contributor: Themaister <maister@archlinux.us>
 
 pkgname=pcsx2-git
-pkgver=1.7.5683.r0.ge6ff49eb60
+pkgver=1.7.5687.r0.gdcdb39026c
 pkgrel=1
 pkgdesc='A Sony PlayStation 2 emulator'
 arch=(x86_64)
@@ -64,7 +64,6 @@ source=(
     git+https://github.com/biojppm/cmake.git
     git+https://github.com/biojppm/c4core.git
     git+https://github.com/biojppm/debugbreak.git
-    git+https://github.com/KhronosGroup/glslang.git
     git+https://github.com/fastfloat/fast_float.git
     vulkan-headers::git+https://github.com/KhronosGroup/Vulkan-Headers.git
     pcsx2-qt.sh
@@ -78,7 +77,6 @@ prepare() {
         googletest::3rdparty/gtest
         fmt::3rdparty/fmt/fmt
         rapidyaml::3rdparty/rapidyaml/rapidyaml
-        glslang::3rdparty/glslang/glslang
         vulkan-headers::3rdparty/vulkan-headers
     )
     for submodule in ${_pcsx2_submodules[@]}; do
@@ -141,7 +139,6 @@ package() {
 }
 
 b2sums=('SKIP'
-    'SKIP'
     'SKIP'
     'SKIP'
     'SKIP'
