@@ -4,7 +4,7 @@
 # Contributor: Themaister <maister@archlinux.us>
 
 pkgname=pcsx2-git
-pkgver=1.7.5659.r0.g9de38e50e2
+pkgver=1.7.5683.r0.ge6ff49eb60
 pkgrel=1
 pkgdesc='A Sony PlayStation 2 emulator'
 arch=(x86_64)
@@ -65,11 +65,8 @@ source=(
     git+https://github.com/biojppm/c4core.git
     git+https://github.com/biojppm/debugbreak.git
     git+https://github.com/KhronosGroup/glslang.git
-    git+https://github.com/webmproject/libwebp
     git+https://github.com/fastfloat/fast_float.git
-    git+https://github.com/lz4/lz4.git
     vulkan-headers::git+https://github.com/KhronosGroup/Vulkan-Headers.git
-    git+https://github.com/facebook/zstd.git
     pcsx2-qt.sh
 )
 install=pcsx2-git.install
@@ -80,12 +77,9 @@ prepare() {
     _pcsx2_submodules=(
         googletest::3rdparty/gtest
         fmt::3rdparty/fmt/fmt
-        lz4::3rdparty/lz4/lz4
-        libwebp::3rdparty/libwebp/libwebp
         rapidyaml::3rdparty/rapidyaml/rapidyaml
         glslang::3rdparty/glslang/glslang
         vulkan-headers::3rdparty/vulkan-headers
-        zstd::3rdparty/zstd/zstd
     )
     for submodule in ${_pcsx2_submodules[@]}; do
         git submodule init "${submodule#*::}"
@@ -147,9 +141,6 @@ package() {
 }
 
 b2sums=('SKIP'
-    'SKIP'
-    'SKIP'
-    'SKIP'
     'SKIP'
     'SKIP'
     'SKIP'
