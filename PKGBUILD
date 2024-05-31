@@ -140,7 +140,7 @@ package() {
     install -Dm644 pcsx2/bin/resources/icons/AppIconLarge.png \
     "${pkgdir}"/usr/share/icons/hicolor/512x512/apps/PCSX2.png
     install -Dm644 -t "${pkgdir}"/opt/"${pkgname%-git}"/resources/ patches.zip
-    install -Dm644 -t "${pkgdir}"/opt/"${pkgname%-git}" "/usr/lib/shaderc-non-semantic/libshaderc_shared.so.1"
+    install -Dm644 -t "${pkgdir}"/opt/"${pkgname%-git}" "/usr/lib/shaderc-non-semantic-debug/libshaderc_shared.so.1"
 }
 
 b2sums=('SKIP'
