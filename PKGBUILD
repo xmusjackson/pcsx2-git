@@ -4,7 +4,7 @@
 # Contributor: Themaister <maister@archlinux.us>
 
 pkgname=pcsx2-git
-pkgver=1.7.5703.r0.g070068366f
+pkgver=1.7.5856.r0.g69c2c53ca7
 pkgrel=1
 pkgdesc='A Sony PlayStation 2 emulator'
 arch=(x86_64)
@@ -33,7 +33,8 @@ depends=(
     libpng
     hicolor-icon-theme
     xcb-util-cursor
-)
+    libbacktrace-git
+    )
 makedepends=(
     cmake
     extra-cmake-modules
@@ -115,6 +116,8 @@ build() {
     -DCMAKE_EXE_LINKER_FLAGS_INIT="-fuse-ld=lld" \
     -DCMAKE_MODULE_LINKER_FLAGS_INIT="-fuse-ld=lld" \
     -DCMAKE_SHARED_LINKER_FLAGS_INIT="-fuse-ld=lld" \
+    -DSHADERC_INCLUDE_DIR=/usr/lib/shaderc-non-semantic/include \
+    -DSHADERC_LIBRARY=/usr/lib/shaderc-non-semantic \
     -DUSE_VULKAN=ON \
     -DENABLE_SETCAP=OFF \
     -DX11_API=ON \
@@ -137,6 +140,7 @@ package() {
     install -Dm644 pcsx2/bin/resources/icons/AppIconLarge.png \
     "${pkgdir}"/usr/share/icons/hicolor/512x512/apps/PCSX2.png
     install -Dm644 -t "${pkgdir}"/opt/"${pkgname%-git}"/resources/ patches.zip
+    install -Dm644 -t "${pkgdir}"/opt/"${pkgname%-git}" "/usr/lib/shaderc-non-semantic/libshaderc_shared.so.1"
 }
 
 b2sums=('SKIP'

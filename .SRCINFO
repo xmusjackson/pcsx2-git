@@ -1,6 +1,6 @@
 pkgbase = pcsx2-git
 	pkgdesc = A Sony PlayStation 2 emulator
-	pkgver = 1.7.5703.r0.g070068366f
+	pkgver = 1.7.5856.r0.g69c2c53ca7
 	pkgrel = 1
 	url = https://github.com/PCSX2/pcsx2
 	install = pcsx2-git.install
@@ -37,6 +37,7 @@ pkgbase = pcsx2-git
 	depends = libpng
 	depends = hicolor-icon-theme
 	depends = xcb-util-cursor
+	depends = libbacktrace-git
 	optdepends = qt6-wayland: Wayland support
 	optdepends = libpulse: Pulseaudio support
 	optdepends = libpipewire: Pipewire support
