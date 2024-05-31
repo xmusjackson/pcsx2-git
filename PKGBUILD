@@ -116,8 +116,8 @@ build() {
     -DCMAKE_EXE_LINKER_FLAGS_INIT="-fuse-ld=lld" \
     -DCMAKE_MODULE_LINKER_FLAGS_INIT="-fuse-ld=lld" \
     -DCMAKE_SHARED_LINKER_FLAGS_INIT="-fuse-ld=lld" \
-    -DSHADERC_INCLUDE_DIR=/usr/lib/shaderc-non-semantic/include \
-    -DSHADERC_LIBRARY=/usr/lib/shaderc-non-semantic \
+    -DSHADERC_INCLUDE_DIR=/usr/lib/shaderc-non-semantic-debug/include \
+    -DSHADERC_LIBRARY=/usr/lib/shaderc-non-semantic-debug \
     -DUSE_VULKAN=ON \
     -DENABLE_SETCAP=OFF \
     -DX11_API=ON \
