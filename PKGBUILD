@@ -120,6 +120,7 @@ build() {
     -DSHADERC_LIBRARY=/usr/lib/shaderc-non-semantic-debug \
     -DUSE_VULKAN=ON \
     -DENABLE_SETCAP=OFF \
+    -DCMAKE_SKIP_RPATH=ON \
     -DX11_API=ON \
     -DWAYLAND_API=ON \
     -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
