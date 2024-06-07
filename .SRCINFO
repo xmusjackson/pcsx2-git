@@ -1,6 +1,6 @@
 pkgbase = pcsx2-git
 	pkgdesc = A Sony PlayStation 2 emulator
-	pkgver = 1.7.5856.r0.g69c2c53ca7
+	pkgver = 1.7.5864.r0.g877c3ee90d
 	pkgrel = 1
 	url = https://github.com/PCSX2/pcsx2
 	install = pcsx2-git.install
@@ -29,7 +29,6 @@ pkgbase = pcsx2-git
 	depends = ffmpeg
 	depends = sdl2
 	depends = lld
-	depends = shaderc-non-semantic-debug
 	depends = qt6-base
 	depends = qt6-svg
 	depends = soundtouch
@@ -54,7 +53,15 @@ pkgbase = pcsx2-git
 	source = git+https://github.com/biojppm/debugbreak.git
 	source = git+https://github.com/fastfloat/fast_float.git
 	source = vulkan-headers::git+https://github.com/KhronosGroup/Vulkan-Headers.git
+	source = shaderc::git+https://github.com/google/shaderc.git#tag=v2024.1
+	source = glslang::git+https://github.com/KhronosGroup/glslang.git#commit=142052fa30f9eca191aa9dcf65359fcaed09eeec
+	source = spirv-headers::git+https://github.com/KhronosGroup/SPIRV-Headers.git#commit=5e3ad389ee56fca27c9705d093ae5387ce404df4
+	source = spirv-tools::git+https://github.com/KhronosGroup/SPIRV-Tools.git#commit=dd4b663e13c07fea4fbb3f70c1c91c86731099f7
 	source = pcsx2-qt.sh
+	b2sums = SKIP
+	b2sums = SKIP
+	b2sums = SKIP
+	b2sums = SKIP
 	b2sums = SKIP
 	b2sums = SKIP
 	b2sums = SKIP

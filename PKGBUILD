@@ -1,14 +1,22 @@
-# Maintainer: rafaelff <rafaelff@gnome.org>, WeirdBeard <obarrtimothy@gmail.com>
+# Maintainer: WeirdBeard <obarrtimothy@gmail.com>
+# Contributor: Christian Hegerstroem
 # Contributor: éclairevoyant
 # Contributor: Maxime Gauduin <alucryd@archlinux.org>
 # Contributor: Themaister <maister@archlinux.us>
 
 pkgname=pcsx2-git
-pkgver=1.7.5856.r0.g69c2c53ca7
+pkgver=1.7.5867.r0.g5e858fa1bc
 pkgrel=1
 pkgdesc='A Sony PlayStation 2 emulator'
 arch=(x86_64)
 url=https://github.com/PCSX2/pcsx2
+
+# https://github.com/PCSX2/pcsx2/blob/master/.github/workflows/scripts/linux/build-dependencies-qt.sh
+_shaderc=2024.1
+_shaderc_glslang=142052fa30f9eca191aa9dcf65359fcaed09eeec
+_shaderc_spirvheaders=5e3ad389ee56fca27c9705d093ae5387ce404df4
+_shaderc_spirvtools=dd4b663e13c07fea4fbb3f70c1c91c86731099f7
+
 license=(
     GPL2
     GPL3
@@ -25,7 +33,6 @@ depends=(
     ffmpeg
     sdl2
     lld
-    shaderc-non-semantic-debug
     qt6-base
     qt6-svg
     soundtouch
@@ -68,6 +75,10 @@ source=(
     git+https://github.com/biojppm/debugbreak.git
     git+https://github.com/fastfloat/fast_float.git
     vulkan-headers::git+https://github.com/KhronosGroup/Vulkan-Headers.git
+    shaderc::git+https://github.com/google/shaderc.git#tag=v"${_shaderc}"
+    glslang::git+https://github.com/KhronosGroup/glslang.git#commit="${_shaderc_glslang}"
+    spirv-headers::git+https://github.com/KhronosGroup/SPIRV-Headers.git#commit="${_shaderc_spirvheaders}"
+    spirv-tools::git+https://github.com/KhronosGroup/SPIRV-Tools.git#commit="${_shaderc_spirvtools}"
     pcsx2-qt.sh
 )
 install=pcsx2-git.install
@@ -81,9 +92,9 @@ prepare() {
         rapidyaml::3rdparty/rapidyaml/rapidyaml
         vulkan-headers::3rdparty/vulkan-headers
     )
-    for submodule in ${_pcsx2_submodules[@]}; do
+    for submodule in "${_pcsx2_submodules[@]}"; do
         git submodule init "${submodule#*::}"
-        git submodule set-url "${submodule#*::}" "$srcdir"/"${submodule%::*}"
+        git submodule set-url "${submodule#*::}" "${srcdir}"/"${submodule%::*}"
         git -c protocol.file.allow=always submodule update "${submodule#*::}"
     done
     
@@ -100,6 +111,12 @@ prepare() {
         git submodule set-url ${submodule} "${srcdir}/${submodule##*/}"
         git -c protocol.file.allow=always submodule update ${submodule}
     done
+
+    ln -s "${srcdir}"/glslang "${srcdir}"/shaderc/third_party/glslang
+    ln -s "${srcdir}"/spirv-headers "${srcdir}"/shaderc/third_party/spirv-headers
+    ln -s "${srcdir}"/spirv-tools "${srcdir}"/shaderc/third_party/spirv-tools
+
+    patch -p1 -i "${srcdir}"/pcsx2/.github/workflows/scripts/common/shaderc-changes.patch -d "${srcdir}"/shaderc
 }
 
 pkgver() {
@@ -108,6 +125,22 @@ pkgver() {
 }
 
 build() {
+    # Build custom shaderc
+
+    cmake -S shaderc -B shaderc_build \
+    -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_PREFIX_PATH="${srcdir}/shaderc_out" \
+    -DCMAKE_INSTALL_PREFIX="${srcdir}/shaderc_out" \
+    -DSHADERC_SKIP_TESTS=ON \
+    -DSHADERC_SKIP_EXAMPLES=ON \
+    -DSHADERC_SKIP_COPYRIGHT_CHECK=ON 
+
+    cmake --build shaderc_build --parallel
+    ninja -C shaderc_build install
+
+    # Build PCSX2
+
     cmake -S pcsx2 -B build \
     -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
@@ -116,23 +149,21 @@ build() {
     -DCMAKE_EXE_LINKER_FLAGS_INIT="-fuse-ld=lld" \
     -DCMAKE_MODULE_LINKER_FLAGS_INIT="-fuse-ld=lld" \
     -DCMAKE_SHARED_LINKER_FLAGS_INIT="-fuse-ld=lld" \
-    -DSHADERC_INCLUDE_DIR=/usr/lib/shaderc-non-semantic-debug/include \
-    -DSHADERC_LIBRARY=/usr/lib/shaderc-non-semantic-debug \
+    -DCMAKE_PREFIX_PATH="${srcdir}/shaderc_out" \
+    -DCMAKE_BUILD_RPATH='/opt/pcsx2' \
     -DUSE_VULKAN=ON \
     -DENABLE_SETCAP=OFF \
-    -DCMAKE_SKIP_RPATH=ON \
     -DX11_API=ON \
     -DWAYLAND_API=ON \
     -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
     -DDISABLE_ADVANCE_SIMD=ON
     ninja -C build
-    
+
     cd pcsx2_patches
     7z a -r ../patches.zip patches/.
 }
 
 package() {
-    ls pcsx2
     install -dm755  "${pkgdir}"/opt/
     cp -r build/bin "${pkgdir}"/opt/"${pkgname%-git}"
     install -Dm755 pcsx2-qt.sh "$pkgdir"/usr/bin/pcsx2-qt
@@ -141,17 +172,21 @@ package() {
     install -Dm644 pcsx2/bin/resources/icons/AppIconLarge.png \
     "${pkgdir}"/usr/share/icons/hicolor/512x512/apps/PCSX2.png
     install -Dm644 -t "${pkgdir}"/opt/"${pkgname%-git}"/resources/ patches.zip
-    install -Dm644 -t "${pkgdir}"/opt/"${pkgname%-git}" "/usr/lib/shaderc-non-semantic-debug/libshaderc_shared.so.1"
+    install -Dm644 -t "${pkgdir}"/opt/"${pkgname%-git}"/ "${srcdir}"/shaderc_out/lib/libshaderc_shared.so.1
 }
 
 b2sums=('SKIP'
-    'SKIP'
-    'SKIP'
-    'SKIP'
-    'SKIP'
-    'SKIP'
-    'SKIP'
-    'SKIP'
-    'SKIP'
-    'SKIP'
-'956d3547f316de51de4712e6ad6cf5621efadd222ef6c1aa18508321949e63d6b3dc32cdc7eabbcb8172b4b77593485e3debe0b250ec3d0c6926170d80baf3ef')
+        'SKIP'
+        'SKIP'
+        'SKIP'
+        'SKIP'
+        'SKIP'
+        'SKIP'
+        'SKIP'
+        'SKIP'
+        'SKIP'
+        'SKIP'
+        'SKIP'
+        'SKIP'
+        'SKIP'
+        '956d3547f316de51de4712e6ad6cf5621efadd222ef6c1aa18508321949e63d6b3dc32cdc7eabbcb8172b4b77593485e3debe0b250ec3d0c6926170d80baf3ef')

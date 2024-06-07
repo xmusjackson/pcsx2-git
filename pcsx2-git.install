@@ -2,11 +2,23 @@
 post_install()
 {
   setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip' opt/pcsx2/pcsx2-qt
+  printf "###########################################################################################
+
+WARNING: Please clear your shader cache after upgrading PCSX2 or you may run into problems!
+Shader cache dirs: \$HOME/.cache/mesa_shader_cache/, \$HOME/.config/PCSX2/cache/
+
+###########################################################################################\n"
 }
 
 post_upgrade()
 {
   setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip' opt/pcsx2/pcsx2-qt
+  printf "###########################################################################################
+
+WARNING: Please clear your shader cache after upgrading PCSX2 or you may run into problems!
+Shader cache dirs: \$HOME/.cache/mesa_shader_cache/, \$HOME/.config/PCSX2/cache/
+
+###########################################################################################\n"
 }
 
 pre_remove()
